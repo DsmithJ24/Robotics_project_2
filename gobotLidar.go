@@ -15,13 +15,14 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 
 ) {
 
+	drive(gopigo3)
 	err := lidarSensor.Start()
 	if err != nil {
   //no reding print following string
 		fmt.Println("error starting lidarSensor")
 	}
 // continuing loop
-	for { 
+	for {
 		lidarReading, err := lidarSensor.Distance()
 		if err != nil {
 			fmt.Println("Error reading lidar sensor %+v", err)
@@ -30,14 +31,18 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 
 		fmt.Println(lidarReading)
 		fmt.Println(message)
-		time.Sleep(time.Second * 3)
+		time.Sleep(time.Second * 1)
+		if lidarReading <=25 {
+			gopigo3.Halt()
+		}
+
 	}
 }
 
 //these functions are from project 1, might be used again. may need to make them in above function with 'func:=' format)
-
-func drive() {
-        on := uint8(0xFF)
+func drive(gopigo3 *g.Driver) {
+//        on := uint8(0xFF)
+/*
 		//do we need the flashing lights?
         gobot.Every(1000*time.Millisecond, func() {
 				//do we need these flashing lights?
@@ -50,47 +55,27 @@ func drive() {
                         fmt.Println(err)
                 }
                 on = ^on
-                //raspiAdaptor := raspi.NewAdaptor()
-                //gopigo3 := g.NewDriver(raspiAdaptor)
-        gopigo3.SetMotorDps(g.MOTOR_LEFT + g.MOTOR_RIGHT, 180)
+*/
+        gopigo3.SetMotorDps(g.MOTOR_LEFT + g.MOTOR_RIGHT, 45)
         time.Sleep(time.Second)
-        gopigo3.Halt()
-        })
+//        gopigo3.Halt()
+//        })
 }
-
-func turn_left(){
+/*
+func turn_left(gopigo3 *g.Driver){
         gopigo3.SetMotorDps(g.MOTOR_RIGHT, 180)
         time.Sleep(time.Second)
         gopigo3.Halt()
 }
 
-func turn_right(){
+func turn_right(*gopigo3.Driver){
         gopigo3.SetMotorDps(g.MOTOR_LEFT, 180)
         time.Sleep(time.Second)
         gopigo3.Halt()
 }
+*/
 
-//lets add in a stop function. goal is to stop the robot. (is there a way to stop the drive function instead?)
-func stop(){
-		on := uint8(0xFF)
-		//do we need the flashing lights?
-        gobot.Every(1000*time.Millisecond, func() {
-				//do we need these flashing lights?
-                err := gopigo3.SetLED(g.LED_EYE_RIGHT, 0x00, 0x00, on)
-                if err != nil {
-                        fmt.Println(err)
-                }
-                err = gopigo3.SetLED(g.LED_EYE_LEFT, ^on, 0x00, 0x00)
-                if err != nil {
-                        fmt.Println(err)
-                }
-                on = ^on
-                //raspiAdaptor := raspi.NewAdaptor()
-                //gopigo3 := g.NewDriver(raspiAdaptor)
-        gopigo3.SetMotorDps(0, 0)
-        time.Sleep(time.Second)
-        gopigo3.Halt()
-}
+//use gopigo3.halt to stop
 
 //now need a function that handles the turning and resumes driving. corrections
 func correction(){
@@ -106,6 +91,7 @@ func main() {
 	lightSensor := aio.NewGroveLightSensorDriver(gopigo3, "AD_2_1")
 	workerThread := func() {
 		robotMainLoop(raspberryPi, gopigo3, lidarSensor)
+
 	}
 	robot := gobot.NewRobot("Gopigo Pi4 Bot",
 		[]gobot.Connection{raspberryPi},
