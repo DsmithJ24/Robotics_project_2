@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+//this loop takes readings every few seconds continuously. work should be done in here
 func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,
 
 ) {
@@ -31,6 +32,71 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 		fmt.Println(message)
 		time.Sleep(time.Second * 3)
 	}
+}
+
+//these functions are from project 1, might be used again. may need to make them in above function with 'func:=' format)
+
+func drive() {
+        on := uint8(0xFF)
+		//do we need the flashing lights?
+        gobot.Every(1000*time.Millisecond, func() {
+				//do we need these flashing lights?
+                err := gopigo3.SetLED(g.LED_EYE_RIGHT, 0x00, 0x00, on)
+                if err != nil {
+                        fmt.Println(err)
+                }
+                err = gopigo3.SetLED(g.LED_EYE_LEFT, ^on, 0x00, 0x00)
+                if err != nil {
+                        fmt.Println(err)
+                }
+                on = ^on
+                //raspiAdaptor := raspi.NewAdaptor()
+                //gopigo3 := g.NewDriver(raspiAdaptor)
+        gopigo3.SetMotorDps(g.MOTOR_LEFT + g.MOTOR_RIGHT, 180)
+        time.Sleep(time.Second)
+        gopigo3.Halt()
+        })
+}
+
+func turn_left(){
+        gopigo3.SetMotorDps(g.MOTOR_RIGHT, 180)
+        time.Sleep(time.Second)
+        gopigo3.Halt()
+}
+
+func turn_right(){
+        gopigo3.SetMotorDps(g.MOTOR_LEFT, 180)
+        time.Sleep(time.Second)
+        gopigo3.Halt()
+}
+
+//lets add in a stop function. goal is to stop the robot. (is there a way to stop the drive function instead?)
+func stop(){
+		on := uint8(0xFF)
+		//do we need the flashing lights?
+        gobot.Every(1000*time.Millisecond, func() {
+				//do we need these flashing lights?
+                err := gopigo3.SetLED(g.LED_EYE_RIGHT, 0x00, 0x00, on)
+                if err != nil {
+                        fmt.Println(err)
+                }
+                err = gopigo3.SetLED(g.LED_EYE_LEFT, ^on, 0x00, 0x00)
+                if err != nil {
+                        fmt.Println(err)
+                }
+                on = ^on
+                //raspiAdaptor := raspi.NewAdaptor()
+                //gopigo3 := g.NewDriver(raspiAdaptor)
+        gopigo3.SetMotorDps(0, 0)
+        time.Sleep(time.Second)
+        gopigo3.Halt()
+}
+
+//now need a function that handles the turning and resumes driving. corrections
+func correction(){
+	//needs to turn in direction of sensor
+	//should also drive forward a bit to get an appropriate reading
+	//needs to resume driving and tracking distance
 }
 
 func main() {
