@@ -31,6 +31,7 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 
 		fmt.Println(lidarReading)
 		fmt.Println(message)
+		//Leave this speed its perfect
 		time.Sleep(time.Second * 1)
 		if lidarReading <=25 {
 			gopigo3.Halt()
