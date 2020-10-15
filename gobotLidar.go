@@ -36,8 +36,30 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 		if lidarReading <=25 {
 			gopigo3.Halt()
 		}
+	drive(gopigo3)
+	err := lidarSensor.Start()
+	if err != nil {
+               fmt.Println("error starting lidarSensor")	
 
 	}
+		for {
+		lidarReading, err := lidarSensor.Distance()
+		if err != nil {
+			fmt.Println("Error reading lidar sensor %+v", err)
+		}
+		message := fmt.Sprintf("Lidar Reading: %d", lidarReading)
+
+		fmt.Println(lidarReading)
+		fmt.Println(message)
+		//Leave this speed its perfect
+		time.Sleep(time.Second * 1)
+		if lidarReading >25 {
+			gopigo3.Halt()
+			func turn_left(gopigo3 *g.Driver){
+        gopigo3.SetMotorDps(g.MOTOR_RIGHT, 180)
+        time.Sleep(time.Second)
+        gopigo3.Halt()
+		}
 }
 
 //these functions are from project 1, might be used again. may need to make them in above function with 'func:=' format)
