@@ -14,9 +14,8 @@ import (
 func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,
 
 ) {
-       //// need to enable the abitlity for the wheels to keep track of revolutions using enable_encoders()
+       
 	drive(gopigo3)
-	enable_encoders()
 	err := lidarSensor.Start()
 	if err != nil {
   //no reding print following string
@@ -36,7 +35,10 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 		time.Sleep(time.Second * 1)
 		if lidarReading <=25 {
 			gopigo3.Halt()
+	//at this point robot has reached the box and stopped		
+		
 		}
+		
 	drive(gopigo3)
 	enable_encoders()
 	err := lidarSensor.Start()
@@ -44,6 +46,9 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
                fmt.Println("error starting lidarSensor")	
 
 	}
+		//second loop?
+		// need to enable the abitlity for the wheels to keep track of revolutions using enable_encoders()
+		//on this pass distance must be measured
 		for {
 		lidarReading, err := lidarSensor.Distance()
 		if err != nil {
@@ -57,6 +62,7 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 		time.Sleep(time.Second * 1)
 		if lidarReading >25 {
 			gopigo3.Halt()
+		//Robot past first measured side
 			func turn_left(gopigo3 *g.Driver){
         gopigo3.SetMotorDps(g.MOTOR_RIGHT, 180)
         time.Sleep(time.Second)
@@ -86,17 +92,17 @@ func drive(gopigo3 *g.Driver) {
 //        gopigo3.Halt()
 //        })
 }
-/*
+
 func turn_left(gopigo3 *g.Driver){
         gopigo3.SetMotorDps(g.MOTOR_RIGHT, 180)
         time.Sleep(time.Second)
         gopigo3.Halt()
 }
 
-func turn_right(*gopigo3.Driver){
-        gopigo3.SetMotorDps(g.MOTOR_LEFT, 180)
-        time.Sleep(time.Second)
-        gopigo3.Halt()
+//func turn_right(*gopigo3.Driver){
+        //gopigo3.SetMotorDps(g.MOTOR_LEFT, 180)
+       // time.Sleep(time.Second)
+        //gopigo3.Halt()
 }
 */
 
