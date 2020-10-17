@@ -14,8 +14,9 @@ import (
 func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,
 
 ) {
-
+       //// need to enable the abitlity for the wheels to keep track of revolutions using enable_encoders()
 	drive(gopigo3)
+	enable_encoders()
 	err := lidarSensor.Start()
 	if err != nil {
   //no reding print following string
@@ -37,6 +38,7 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 			gopigo3.Halt()
 		}
 	drive(gopigo3)
+	enable_encoders()
 	err := lidarSensor.Start()
 	if err != nil {
                fmt.Println("error starting lidarSensor")	
