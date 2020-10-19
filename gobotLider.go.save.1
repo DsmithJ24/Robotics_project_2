@@ -9,9 +9,8 @@ import (
 	"gobot.io/x/gobot/platforms/raspi"
 	"time"
 )
-//Robot work
-//this loop takes readings every few seconds continuously. work should be done in here
 
+//this loop takes readings every few seconds continuously. work should be done in here
 func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,
 
 ) {
@@ -22,7 +21,7 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
   //no reding print following string
 		fmt.Println("error starting lidarSensor")
 	}
-// 1st loop, turn it into a function that finds the box
+// continuing loop
 	for {
 		lidarReading, err := lidarSensor.Distance()
 		if err != nil {
@@ -33,40 +32,15 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 		fmt.Println(lidarReading)
 		fmt.Println(message)
 		time.Sleep(time.Second * 1)
-
 		if lidarReading <=25 {
 			gopigo3.Halt()
-			break;
 		}
 
-	}
-	time.Sleep(time.Second *1)
-	fmt.Println("Found Box")
-	drive(gopigo3)
-
-	//2nd loop, becomes a function that measures box
-	for{
-		lidarReading, err := lidarSensor.Distance()
-                if err != nil {
-                       	fmt.Println("Error reading lidar sensor %+v", err)
-                }
-		message := fmt.Sprintf("Lidar Reading: %d", lidarReading)
-
-                fmt.Println(lidarReading)
-		fmt.Println(message)
-                time.Sleep(time.Second * 1)
-
-		if lidarReading >= 25{
-			gopigo3.Halt()
-			fmt.Println("Edge of box")
-		}
-
-		//either 3rd function or coode that turns robot
-		//and then calls the 1st loop to find box, then 2nd loop
 	}
 }
 
 //these functions are from project 1, might be used again. may need to make them in above function with 'func:=' format)
+
 func drive(gopigo3 *g.Driver) {
 //        on := uint8(0xFF)
 /*
