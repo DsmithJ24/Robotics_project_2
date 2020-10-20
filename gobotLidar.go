@@ -15,11 +15,10 @@ import (
 func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,
 
 ) {
-
+/*
 	drive(gopigo3)
 	err := lidarSensor.Start()
 	if err != nil {
-  //no reding print following string
 		fmt.Println("error starting lidarSensor")
 	}
 // 1st loop, turn it into a function that finds the box
@@ -40,10 +39,29 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 		}
 
 	}
-	time.Sleep(time.Second *1)
-	fmt.Println("Found Box")
-	drive(gopigo3)
+*/
 
+// all this in a for loop
+	for{
+	//start by finding the box
+		findbox()
+		time.Sleep(time.Second *1)
+		fmt.Println("Found Box")
+
+	//now box is found, drive and take measurements	
+		measurement()
+		time.Sleep(time.Second*1)
+		fmt.Println("Edge of box")
+	
+	//reached the edge, start turning
+		turn_left()
+		fmt.Println("Turn complete")
+		
+	//find the box again, loop back
+	}
+
+/*	
+	drive(gopigo3)
 	//2nd loop, becomes a function that measures box
 	for{
 		lidarReading, err := lidarSensor.Distance()
@@ -60,7 +78,7 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 			gopigo3.Halt()
 			fmt.Println("Edge of box")
 		}
-
+*/
 		//either 3rd function or coode that turns robot
 		//and then calls the 1st loop to find box, then 2nd loop
 	}
@@ -68,33 +86,24 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 
 //these functions are from project 1, might be used again. may need to make them in above function with 'func:=' format)
 func drive(gopigo3 *g.Driver) {
-//        on := uint8(0xFF)
-/*
-		//do we need the flashing lights?
-        gobot.Every(1000*time.Millisecond, func() {
-				//do we need these flashing lights?
-                err := gopigo3.SetLED(g.LED_EYE_RIGHT, 0x00, 0x00, on)
-                if err != nil {
-                        fmt.Println(err)
-                }
-                err = gopigo3.SetLED(g.LED_EYE_LEFT, ^on, 0x00, 0x00)
-                if err != nil {
-                        fmt.Println(err)
-                }
-                on = ^on
-*/
         gopigo3.SetMotorDps(g.MOTOR_LEFT + g.MOTOR_RIGHT, 45)
         time.Sleep(time.Second)
 //        gopigo3.Halt()
 //        })
 }
-/*
+
 func turn_left(gopigo3 *g.Driver){
+
+		//drive forward one diameter of wheel length (~55 deg). then turn left
+        gopigo3.SetMotorDps(g.MOTOR_LEFT + g.MOTOR_RIGHT, 55)
+		time.Sleep(time.Second)
+		gopigo3.Halt()
+		
         gopigo3.SetMotorDps(g.MOTOR_RIGHT, 180)
         time.Sleep(time.Second)
         gopigo3.Halt()
 }
-
+/*
 func turn_right(*gopigo3.Driver){
         gopigo3.SetMotorDps(g.MOTOR_LEFT, 180)
         time.Sleep(time.Second)
@@ -105,10 +114,55 @@ func turn_right(*gopigo3.Driver){
 //use gopigo3.halt to stop
 
 //now need a function that handles the turning and resumes driving. corrections
-func correction(){
-	//needs to turn in direction of sensor
-	//should also drive forward a bit to get an appropriate reading
-	//needs to resume driving and tracking distance
+func findbox(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
+	//stuff from 1st loop. drives to find the box
+	drive(gopigo3)
+	err := lidarSensor.Start()
+	if err != nil {
+		fmt.Println("error starting lidarSensor")
+	}
+// 1st loop, turn it into a function that finds the box
+	for {
+		lidarReading, err := lidarSensor.Distance()
+		if err != nil {
+			fmt.Println("Error reading lidar sensor %+v", err)
+		}
+		message := fmt.Sprintf("Lidar Reading: %d", lidarReading)
+
+		fmt.Println(lidarReading)
+		fmt.Println(message)
+		time.Sleep(time.Second * 1)
+
+		if lidarReading <=25 {
+			gopigo3.Halt()
+			break;
+		}
+	}
+}
+
+func measurement(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
+	//stuff from second loop. drives around side of bax and takes measurement
+	drive(gopigo3)
+	//2nd loop, becomes a function that measures box
+	for{
+		lidarReading, err := lidarSensor.Distance()
+                if err != nil {
+                       	fmt.Println("Error reading lidar sensor %+v", err)
+                }
+		message := fmt.Sprintf("Lidar Reading: %d", lidarReading)
+
+                fmt.Println(lidarReading)
+		fmt.Println(message)
+                time.Sleep(time.Second * 1)
+
+		if lidarReading >= 25{
+			gopigo3.Halt()
+			break;
+		}
+
+		//either 3rd function or coode that turns robot
+		//and then calls the 1st loop to find box, then 2nd loop
+	}
 }
 
 func main() {
