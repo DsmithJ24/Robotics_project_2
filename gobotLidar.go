@@ -44,23 +44,23 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 // all this in a for loop
 	for{
 	//start by finding the box
-		findbox()
+		findbox(gopigo3, lidarSensor)
 		time.Sleep(time.Second *1)
 		fmt.Println("Found Box")
 
-	//now box is found, drive and take measurements	
-		measurement()
+	//now box is found, drive and take measurements
+		measurement(gopigo3, lidarSensor)
 		time.Sleep(time.Second*1)
 		fmt.Println("Edge of box")
-	
+
 	//reached the edge, start turning
-		turn_left()
+		turn_left(gopigo3)
 		fmt.Println("Turn complete")
-		
+
 	//find the box again, loop back
 	}
 
-/*	
+/*
 	drive(gopigo3)
 	//2nd loop, becomes a function that measures box
 	for{
@@ -78,10 +78,11 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 			gopigo3.Halt()
 			fmt.Println("Edge of box")
 		}
-*/
+
 		//either 3rd function or coode that turns robot
 		//and then calls the 1st loop to find box, then 2nd loop
 	}
+	*/
 }
 
 //these functions are from project 1, might be used again. may need to make them in above function with 'func:=' format)
@@ -94,12 +95,12 @@ func drive(gopigo3 *g.Driver) {
 
 func turn_left(gopigo3 *g.Driver){
 
-		//drive forward one diameter of wheel length (~55 deg). then turn left
-        gopigo3.SetMotorDps(g.MOTOR_LEFT + g.MOTOR_RIGHT, 55)
-		time.Sleep(time.Second)
-		gopigo3.Halt()
-		
-        gopigo3.SetMotorDps(g.MOTOR_RIGHT, 180)
+//drive forward one diameter of wheel length (~55 deg). then turn left
+        gopigo3.SetMotorDps(g.MOTOR_LEFT + g.MOTOR_RIGHT, 40)
+	time.Sleep(time.Second)
+	gopigo3.Halt()
+
+        gopigo3.SetMotorDps(g.MOTOR_RIGHT, 335)
         time.Sleep(time.Second)
         gopigo3.Halt()
 }
@@ -133,7 +134,7 @@ func findbox(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
 		fmt.Println(message)
 		time.Sleep(time.Second * 1)
 
-		if lidarReading <=25 {
+		if lidarReading <=40 {
 			gopigo3.Halt()
 			break;
 		}
@@ -155,7 +156,7 @@ func measurement(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
 		fmt.Println(message)
                 time.Sleep(time.Second * 1)
 
-		if lidarReading >= 25{
+		if lidarReading >= 40{
 			gopigo3.Halt()
 			break;
 		}
