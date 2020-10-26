@@ -15,32 +15,6 @@ import (
 func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,
 
 ) {
-/*
-	drive(gopigo3)
-	err := lidarSensor.Start()
-	if err != nil {
-		fmt.Println("error starting lidarSensor")
-	}
-// 1st loop, turn it into a function that finds the box
-	for {
-		lidarReading, err := lidarSensor.Distance()
-		if err != nil {
-			fmt.Println("Error reading lidar sensor %+v", err)
-		}
-		message := fmt.Sprintf("Lidar Reading: %d", lidarReading)
-
-		fmt.Println(lidarReading)
-		fmt.Println(message)
-		time.Sleep(time.Second * 1)
-
-		if lidarReading <=25 {
-			gopigo3.Halt()
-			break;
-		}
-
-	}
-*/
-
 // all this in a for loop
 	for{
 	//start by finding the box
@@ -60,29 +34,6 @@ func robotMainLoop(piProcessor *raspi.Adaptor, gopigo3 *g.Driver, lidarSensor *i
 	//find the box again, loop back
 	}
 
-/*
-	drive(gopigo3)
-	//2nd loop, becomes a function that measures box
-	for{
-		lidarReading, err := lidarSensor.Distance()
-                if err != nil {
-                       	fmt.Println("Error reading lidar sensor %+v", err)
-                }
-		message := fmt.Sprintf("Lidar Reading: %d", lidarReading)
-
-                fmt.Println(lidarReading)
-		fmt.Println(message)
-                time.Sleep(time.Second * 1)
-
-		if lidarReading >= 25{
-			gopigo3.Halt()
-			fmt.Println("Edge of box")
-		}
-
-		//either 3rd function or coode that turns robot
-		//and then calls the 1st loop to find box, then 2nd loop
-	}
-	*/
 }
 
 //these functions are from project 1, might be used again. may need to make them in above function with 'func:=' format)
@@ -132,7 +83,7 @@ func findbox(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
 
 		fmt.Println(lidarReading)
 		fmt.Println(message)
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Millisecond * 500)
 
 		if lidarReading <=40 {
 			gopigo3.Halt()
@@ -144,9 +95,9 @@ func findbox(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
 func measurement(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
 	//stuff from second loop. drives around side of bax and takes measurement
 	drive(gopigo3)
+	startTime := time.Now()
 	//2nd loop, becomes a function that measures box
 	for{
-//		startTime := time.Now()
 
 		lidarReading, err := lidarSensor.Distance()
                 if err != nil {
@@ -157,14 +108,18 @@ func measurement(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
                 fmt.Println(lidarReading)
 
 		fmt.Println(message)
-                time.Sleep(time.Second * 1)
+//                time.Sleep(time.Second * 1)
+                time.Sleep(time.Millisecond * 500)
 
 		if lidarReading >= 40{
+			duration:= time.Since(startTime)
 			gopigo3.Halt()
 //			endingTime:= time.Since(startTime)
-//			duration:= time.Since(startTime)
 			//need to figure out measureDPS
-//			side := duration.Seconds() * float64(measureDPS) *.05803
+			//rate == 45
+//			side := duration.Seconds() * float64(measureDPS) * 0.05803
+			side := duration.Seconds() * 45 * 0.05803
+			fmt.Println("The length in cm is about", side)
 			break;
 		}
 
