@@ -132,3 +132,14 @@ func main() {
 	robot.Start()
 
 }
+		//Measuring
+		
+// use time.now to start		
+// duration := time.since(start)
+		// use duration.seconds to measure seconds
+		//look for the build package
+		//start a "timer" for x seconds, and finish with y seconds
+		//multiply it by the degrees per second of the wheel
+		//multiply that by .05803
+		//side = duration.Seconds() * float64(measureDPS) * .05803
+		
