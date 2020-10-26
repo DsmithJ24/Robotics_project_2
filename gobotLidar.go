@@ -146,7 +146,7 @@ func measurement(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
 	drive(gopigo3)
 	//2nd loop, becomes a function that measures box
 	for{
-		startTime := time.Now()
+//		startTime := time.Now()
 
 		lidarReading, err := lidarSensor.Distance()
                 if err != nil {
@@ -162,9 +162,9 @@ func measurement(gopigo3 *g.Driver, lidarSensor *i2c.LIDARLiteDriver,){
 		if lidarReading >= 40{
 			gopigo3.Halt()
 //			endingTime:= time.Since(startTime)
-			duration:= time.Since(startTime)
+//			duration:= time.Since(startTime)
 			//need to figure out measureDPS
-			side := duration.Seconds() * float64(measureDPS) *.05803
+//			side := duration.Seconds() * float64(measureDPS) *.05803
 			break;
 		}
 
